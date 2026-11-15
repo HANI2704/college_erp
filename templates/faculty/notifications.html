@@ -1,0 +1,26 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Notifications{% endblock %}
+{% block page_title %}Send Notifications{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Send Notification</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-send me-2"></i>Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-bell-fill text-warning me-2"></i>Sent Notifications</h6></div>
+      <div class="card-body p-0">
+        {% for n in notifications %}<div class="p-3 border-bottom"><div class="fw-semibold" style="font-size:.875rem">{{ n.title }}</div><div class="text-muted" style="font-size:.8rem">{{ n.message|truncatechars:100 }}</div><div class="mt-1"><span class="badge bg-light text-dark">{{ n.get_target_display }}</span><span class="text-muted ms-2" style="font-size:.75rem">{{ n.created_at|date:"d M Y" }}</span></div></div>{% empty %}<div class="text-center py-5 text-muted"><i class="bi bi-bell-slash" style="font-size:2rem;color:#cbd5e1"></i><div class="mt-2">No notifications sent</div></div>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

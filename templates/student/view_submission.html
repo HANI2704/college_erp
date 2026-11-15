@@ -1,0 +1,25 @@
+{% extends "student/base_student.html" %}
+{% block title %}View Submission{% endblock %}
+{% block page_title %}Submission Details{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-file-check text-success me-2"></i>Submission: {{ submission.assignment.title }}</h6></div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-6"><div class="text-muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em">Status</div><span class="badge {% if submission.status == 'graded' %}bg-success{% elif submission.status == 'late' %}bg-warning text-dark{% else %}bg-info{% endif %} mt-1">{{ submission.get_status_display }}</span></div>
+          <div class="col-6"><div class="text-muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em">Submitted</div><div class="fw-semibold mt-1" style="font-size:.875rem">{{ submission.submitted_at|date:"d M Y, h:i A" }}</div></div>
+          {% if submission.marks_obtained %}<div class="col-6"><div class="text-muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em">Marks</div><div class="fw-bold text-success mt-1" style="font-size:1.1rem">{{ submission.marks_obtained }}/{{ submission.assignment.total_marks }}</div></div>{% endif %}
+          {% if submission.notes %}<div class="col-12"><div class="text-muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em">Your Notes</div><div class="mt-1 p-2 rounded-2" style="background:#f8fafc;font-size:.875rem">{{ submission.notes }}</div></div>{% endif %}
+          {% if submission.feedback %}<div class="col-12"><div class="text-muted" style="font-size:.78rem;text-transform:uppercase;letter-spacing:.05em">Faculty Feedback</div><div class="mt-1 p-3 rounded-2" style="background:#f0fdf4;border-left:3px solid #10b981;font-size:.875rem">{{ submission.feedback }}</div></div>{% endif %}
+        </div>
+        <div class="mt-4 d-flex justify-content-between">
+          <a href="{% url 'student_assignments' %}" class="btn btn-outline-secondary rounded-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+          <a href="{{ submission.file.url }}" class="btn btn-outline-primary rounded-3" download><i class="bi bi-download me-1"></i>Download Your Submission</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

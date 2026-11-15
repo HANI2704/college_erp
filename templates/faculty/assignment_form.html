@@ -1,0 +1,70 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}{{ action }} Assignment{% endblock %}
+{% block page_title %}{{ action }} Assignment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-journal-plus text-primary me-2"></i>{{ action }} Assignment</h6>
+      </div>
+      <div class="card-body p-4">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label fw-semibold">Subject *</label>
+              {{ form.subject }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Assignment Title *</label>
+              {{ form.title }}
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Description *</label>
+              {{ form.description }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Due Date & Time *</label>
+              {{ form.due_date }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Total Marks</label>
+              {{ form.total_marks }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Status</label>
+              {{ form.status }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Attachment (optional)</label>
+              {{ form.file }}
+              {% if assignment and assignment.file %}
+                <div class="mt-1"><a href="{{ assignment.file.url }}" class="text-primary" style="font-size:.8rem" target="_blank">
+                  <i class="bi bi-paperclip me-1"></i>Current file
+                </a></div>
+              {% endif %}
+            </div>
+          </div>
+          {% if form.errors %}
+            <div class="alert alert-danger mt-3">
+              {% for field, errors in form.errors.items %}
+                <div>{{ field }}: {{ errors|join:", " }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'faculty_assignments' %}" class="btn btn-outline-secondary rounded-3">
+              <i class="bi bi-arrow-left me-1"></i>Cancel
+            </a>
+            <button type="submit" class="btn btn-primary rounded-3">
+              <i class="bi bi-save me-1"></i>{{ action }} Assignment
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

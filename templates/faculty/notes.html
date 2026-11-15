@@ -1,0 +1,40 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Notes{% endblock %}
+{% block page_title %}Manage Notes{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-upload text-primary me-2"></i>Upload Notes</h6></div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-upload me-2"></i>Upload</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-file-earmark-text-fill text-primary me-2"></i>My Notes ({{ notes|length }})</h6></div>
+      <div class="card-body p-0">
+        {% for note in notes %}
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-semibold" style="font-size:.875rem">{{ note.title }}</div>
+              <div class="text-muted" style="font-size:.8rem">{{ note.subject.subject_name }} &bull; {{ note.created_at|date:"d M Y" }}</div>
+              {% if note.description %}<div class="text-muted mt-1" style="font-size:.78rem">{{ note.description|truncatechars:80 }}</div>{% endif %}
+            </div>
+            <div class="d-flex gap-1 ms-2">
+              <a href="{{ note.file.url }}" class="btn btn-sm btn-outline-success rounded-3" download><i class="bi bi-download"></i></a>
+              <form method="POST" action="{% url 'delete_note' note.id %}" onsubmit="return confirm('Delete?')">{% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button></form>
+            </div>
+          </div>
+        {% empty %}
+          <div class="text-center py-5 text-muted"><i class="bi bi-file-earmark-x" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No notes uploaded</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

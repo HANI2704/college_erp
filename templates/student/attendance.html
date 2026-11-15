@@ -1,0 +1,130 @@
+{% extends "student/base_student.html" %}
+{% block title %}Attendance{% endblock %}
+{% block page_title %}My Attendance{% endblock %}
+
+{% block content %}
+<!-- Overall stats -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card {% if overall_pct >= 75 %}bg-emerald{% else %}bg-rose{% endif %}">
+      <div class="stat-icon"><i class="bi bi-pie-chart-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ overall_pct }}%</div>
+        <div class="stat-label">Overall Attendance</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card bg-teal">
+      <div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ present_all }}</div>
+        <div class="stat-label">Classes Present</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card bg-rose">
+      <div class="stat-icon"><i class="bi bi-x-circle-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ total_all|add:"-0" }}</div>
+        <div class="stat-label">Classes Absent</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card bg-indigo">
+      <div class="stat-icon"><i class="bi bi-collection-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ total_all }}</div>
+        <div class="stat-label">Total Classes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if overall_pct < 75 %}
+  <div class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+    <div>Your overall attendance is <strong>{{ overall_pct }}%</strong> — below the required 75%. Please attend more classes to avoid academic penalties.</div>
+  </div>
+{% endif %}
+
+<!-- Subject-wise -->
+<div class="card mb-4">
+  <div class="card-header py-3">
+    <h6 class="mb-0 fw-semibold"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Subject-wise Attendance</h6>
+  </div>
+  <div class="card-body p-0">
+    {% if attendance_data %}
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Subject</th><th>Total</th><th>Present</th><th>Absent</th><th>Percentage</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for item in attendance_data %}
+              <tr>
+                <td class="fw-semibold" style="font-size:.875rem">{{ item.subject.subject_name }}</td>
+                <td>{{ item.total }}</td>
+                <td class="text-success fw-semibold">{{ item.present }}</td>
+                <td class="text-danger fw-semibold">{{ item.absent }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="progress flex-grow-1" style="height:8px">
+                      <div class="progress-bar {% if item.percentage >= 75 %}bg-success{% else %}bg-danger{% endif %}"
+                           style="width:{{ item.percentage }}%"></div>
+                    </div>
+                    <span style="font-size:.8rem;min-width:40px">{{ item.percentage }}%</span>
+                  </div>
+                </td>
+                <td>
+                  {% if item.status == 'good' %}
+                    <span class="badge bg-success rounded-pill">Good</span>
+                  {% else %}
+                    <span class="badge bg-danger rounded-pill">Low</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5 text-muted">
+        <i class="bi bi-calendar-x" style="font-size:2.5rem;color:#cbd5e1"></i>
+        <div class="mt-2">No attendance records found</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Recent records -->
+<div class="card">
+  <div class="card-header py-3">
+    <h6 class="mb-0 fw-semibold"><i class="bi bi-clock-history text-secondary me-2"></i>Recent Attendance Records</h6>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for a in recent %}
+            <tr>
+              <td style="font-size:.875rem">{{ a.date|date:"d M Y" }}</td>
+              <td style="font-size:.875rem">{{ a.subject.subject_name }}</td>
+              <td>
+                {% if a.status %}
+                  <span class="badge bg-success"><i class="bi bi-check me-1"></i>Present</span>
+                {% else %}
+                  <span class="badge bg-danger"><i class="bi bi-x me-1"></i>Absent</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" class="text-center text-muted py-4">No recent records</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

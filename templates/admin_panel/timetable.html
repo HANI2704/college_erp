@@ -1,0 +1,73 @@
+{% extends "admin_panel/base_admin.html" %}
+{% load erp_tags %}
+{% block title %}Timetable{% endblock %}
+{% block page_title %}Manage Timetable{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Add Entry</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-plus me-1"></i>Add to Timetable</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-clock text-secondary me-2"></i>Add Time Slot</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in slot_form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" name="add_slot" class="btn btn-outline-secondary w-100 rounded-3">Add Slot</button>
+        </form>
+        <div class="mt-3">
+          {% for slot in time_slots %}
+            <span class="badge bg-light text-dark me-1 mb-1">{{ slot }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    {% for day in days %}
+      {% with day_entries=timetable_by_day|get_item:day %}
+        {% if day_entries %}
+          <div class="card mb-3">
+            <div class="card-header py-2 d-flex justify-content-between align-items-center">
+              <h6 class="mb-0 fw-semibold" style="font-size:.875rem"><i class="bi bi-calendar-week me-2 text-primary"></i>{{ day }}</h6>
+              <span class="badge bg-primary rounded-pill">{{ day_entries|length }}</span>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table mb-0" style="font-size:.82rem">
+                  <thead><tr><th>Time</th><th>Subject</th><th>Teacher</th><th>Room</th><th>Class</th><th></th></tr></thead>
+                  <tbody>
+                    {% for entry in day_entries %}
+                      <tr>
+                        <td class="fw-semibold text-primary">{{ entry.time_slot }}</td>
+                        <td>{{ entry.subject }}</td>
+                        <td>{{ entry.teacher }}</td>
+                        <td>{{ entry.room }}</td>
+                        <td>{{ entry.class_name }}</td>
+                        <td>
+                          <form method="POST" action="{% url 'delete_timetable_entry' entry.id %}">
+                            {% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button>
+                          </form>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+    {% if not timetable %}
+      <div class="card"><div class="card-body text-center py-5 text-muted"><i class="bi bi-clock" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No timetable entries yet</div></div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

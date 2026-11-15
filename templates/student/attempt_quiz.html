@@ -1,0 +1,49 @@
+{% extends "student/base_student.html" %}
+{% block title %}Attempt Quiz{% endblock %}
+{% block page_title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card mb-3" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:white">
+      <div class="card-body d-flex justify-content-between align-items-center py-3">
+        <div><div class="fw-bold">{{ quiz.title }}</div><div style="font-size:.8rem;opacity:.8">{{ quiz.subject.subject_name }} &bull; {{ quiz.total_marks }} marks &bull; {{ quiz.duration_minutes }} minutes</div></div>
+        <div class="text-center"><div style="font-size:1.5rem;font-weight:700" id="timer">{{ quiz.duration_minutes }}:00</div><div style="font-size:.75rem;opacity:.8">Time Left</div></div>
+      </div>
+    </div>
+    <form method="POST">{% csrf_token %}
+      {% for question in questions %}
+        <div class="card mb-3">
+          <div class="card-body">
+            <div class="fw-semibold mb-3">Q{{ question.order }}. {{ question.question_text }} <span class="badge bg-light text-dark" style="font-size:.72rem">({{ question.marks }} mark)</span></div>
+            <div class="row g-2">
+              {% for opt, text in question.option_a|list_options:question %}
+              {% endfor %}
+              <div class="col-md-6"><label class="d-flex align-items-center gap-2 p-2 border rounded-3 cursor-pointer" style="cursor:pointer"><input type="radio" name="q_{{ question.id }}" value="A" class="form-check-input" required/><span><strong>A.</strong> {{ question.option_a }}</span></label></div>
+              <div class="col-md-6"><label class="d-flex align-items-center gap-2 p-2 border rounded-3" style="cursor:pointer"><input type="radio" name="q_{{ question.id }}" value="B" class="form-check-input"/><span><strong>B.</strong> {{ question.option_b }}</span></label></div>
+              <div class="col-md-6"><label class="d-flex align-items-center gap-2 p-2 border rounded-3" style="cursor:pointer"><input type="radio" name="q_{{ question.id }}" value="C" class="form-check-input"/><span><strong>C.</strong> {{ question.option_c }}</span></label></div>
+              <div class="col-md-6"><label class="d-flex align-items-center gap-2 p-2 border rounded-3" style="cursor:pointer"><input type="radio" name="q_{{ question.id }}" value="D" class="form-check-input"/><span><strong>D.</strong> {{ question.option_d }}</span></label></div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="d-flex justify-content-between">
+        <a href="{% url 'student_quizzes' %}" class="btn btn-outline-secondary rounded-3" onclick="return confirm('Leave quiz? Progress will be lost.')"><i class="bi bi-arrow-left me-1"></i>Leave</a>
+        <button type="submit" class="btn btn-primary rounded-3" onclick="return confirm('Submit quiz? You cannot change answers after submitting.')"><i class="bi bi-check-circle me-1"></i>Submit Quiz</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+let totalSeconds = {{ quiz.duration_minutes }} * 60;
+const timer = document.getElementById('timer');
+const interval = setInterval(() => {
+  if (totalSeconds <= 0) { clearInterval(interval); document.querySelector('form').submit(); return; }
+  totalSeconds--;
+  const m = Math.floor(totalSeconds/60), s = totalSeconds%60;
+  timer.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (totalSeconds <= 60) timer.style.color = '#fca5a5';
+}, 1000);
+</script>
+{% endblock %}

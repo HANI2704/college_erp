@@ -1,0 +1,48 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Transport{% endblock %}
+{% block page_title %}Transport Registrations{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-bus-front-fill text-primary me-2"></i>Add Registration</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3">Add Registration</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-list-ul me-2"></i>Registrations ({{ registrations|length }})</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0" style="font-size:.82rem">
+            <thead><tr><th>Student</th><th>City</th><th>Pickup</th><th>Shift</th><th>Mode</th><th></th></tr></thead>
+            <tbody>
+              {% for r in registrations %}
+                <tr>
+                  <td>{{ r.student|default:"—" }}</td>
+                  <td>{{ r.city }}</td>
+                  <td>{{ r.pickup_point }}</td>
+                  <td><span class="badge bg-light text-dark">{{ r.shift }}</span></td>
+                  <td><span class="badge bg-info">{{ r.transportation_mode }}</span></td>
+                  <td>
+                    <form method="POST" action="{% url 'delete_transport' r.id %}" onsubmit="return confirm('Delete?')">
+                      {% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No registrations</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "admin_panel/base_admin.html" %}
+
+{% block title %}Edit College{% endblock %}
+{% block page_title %}Edit Constituent College{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-6">
+
+        <div class="card shadow-sm border-0 rounded-4">
+
+            <div class="card-header py-3 bg-white border-0">
+                <h6 class="mb-0 fw-semibold">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    Edit College
+                </h6>
+            </div>
+
+            <div class="card-body">
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-between">
+
+                        <a href="{% url 'admin_constituent' %}"
+                           class="btn btn-secondary rounded-3">
+                            Back
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary rounded-3">
+                            Update College
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

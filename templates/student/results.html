@@ -1,0 +1,89 @@
+{% extends "student/base_student.html" %}
+{% block title %}Results{% endblock %}
+{% block page_title %}My Results{% endblock %}
+
+{% block content %}
+{% if avg_percentage %}
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card bg-indigo">
+        <div class="stat-icon"><i class="bi bi-trophy-fill"></i></div>
+        <div>
+          <div class="stat-value">{{ avg_percentage }}%</div>
+          <div class="stat-label">Average Score</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-teal">
+        <div class="stat-icon"><i class="bi bi-book-fill"></i></div>
+        <div>
+          <div class="stat-value">{{ subjects_data|length }}</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-emerald">
+        <div class="stat-icon"><i class="bi bi-patch-check-fill"></i></div>
+        <div>
+          <div class="stat-value">{{ results|length }}</div>
+          <div class="stat-label">Total Exams</div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% for subject_name, subject_results in subjects_data.items %}
+  <div class="card mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="mb-0 fw-semibold"><i class="bi bi-book text-primary me-2"></i>{{ subject_name }}</h6>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Exam Type</th><th>Marks Obtained</th><th>Total Marks</th><th>Percentage</th><th>Grade</th><th>Remarks</th></tr></thead>
+          <tbody>
+            {% for result in subject_results %}
+              <tr>
+                <td class="fw-semibold" style="font-size:.875rem">{{ result.exam_type }}</td>
+                <td class="fw-bold text-primary">{{ result.marks_obtained }}</td>
+                <td>{{ result.total_marks }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="progress" style="height:6px;width:80px">
+                      <div class="progress-bar {% if result.percentage >= 60 %}bg-success{% elif result.percentage >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                           style="width:{{ result.percentage }}%"></div>
+                    </div>
+                    {{ result.percentage }}%
+                  </div>
+                </td>
+                <td>
+                  <span class="badge rounded-pill
+                    {% if result.grade == 'O' or result.grade == 'A+' %}bg-success
+                    {% elif result.grade == 'A' or result.grade == 'B+' %}bg-primary
+                    {% elif result.grade == 'B' or result.grade == 'C' %}bg-warning text-dark
+                    {% elif result.grade == 'D' %}bg-secondary
+                    {% else %}bg-danger{% endif %}">
+                    {{ result.grade }}
+                  </span>
+                </td>
+                <td class="text-muted" style="font-size:.8rem">{{ result.remarks|default:"—" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="card">
+    <div class="card-body text-center py-5 text-muted">
+      <i class="bi bi-clipboard-x" style="font-size:3rem;color:#cbd5e1"></i>
+      <div class="mt-3 fw-semibold">No results published yet</div>
+      <p style="font-size:.875rem">Your faculty will upload results after examinations.</p>
+    </div>
+  </div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base/layout.html" %}
+
+{% block sidebar_user %}
+  {% if staff %}
+    {% if staff.image %}
+      <img src="{{ staff.image.url }}" alt="{{ staff.name }}"/>
+    {% else %}
+      <div class="user-avatar-placeholder">{{ staff.name|first|upper }}</div>
+    {% endif %}
+    <div class="user-info">
+      <div class="user-name">{{ staff.name }}</div>
+      <span class="user-role">{{ staff.get_role_display }}</span>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block sidebar_nav %}
+  <div class="sidebar-section-label">Main</div>
+  <a href="{% url 'faculty_dashboard' %}"><i class="bi bi-grid-fill"></i> Dashboard</a>
+
+  <div class="sidebar-section-label">Teaching</div>
+  <a href="{% url 'faculty_assignments' %}"><i class="bi bi-journal-check"></i> Assignments</a>
+  <a href="{% url 'faculty_notes' %}"><i class="bi bi-file-earmark-text-fill"></i> Notes</a>
+  <a href="{% url 'faculty_units' %}"><i class="bi bi-collection-fill"></i> Units</a>
+  <a href="{% url 'faculty_lessons' %}"><i class="bi bi-play-circle-fill"></i> Lessons</a>
+  <a href="{% url 'faculty_quizzes' %}"><i class="bi bi-patch-question-fill"></i> Quizzes</a>
+
+  <div class="sidebar-section-label">Students</div>
+  <a href="{% url 'faculty_attendance' %}"><i class="bi bi-calendar-check-fill"></i> Attendance</a>
+  <a href="{% url 'attendance_report' %}"><i class="bi bi-bar-chart-fill"></i> Att. Report</a>
+  <a href="{% url 'faculty_results' %}"><i class="bi bi-clipboard-data-fill"></i> Results</a>
+  <a href="{% url 'faculty_leave_requests' %}"><i class="bi bi-door-open-fill"></i> Leave Requests</a>
+  <a href="{% url 'faculty_feedback' %}"><i class="bi bi-chat-dots-fill"></i> Feedback</a>
+
+  <div class="sidebar-section-label">Schedule</div>
+  <a href="{% url 'faculty_timetable' %}"><i class="bi bi-clock-fill"></i> Timetable</a>
+  <a href="{% url 'faculty_notifications' %}"><i class="bi bi-bell-fill"></i> Notifications</a>
+{% endblock %}
+
+{% block topbar_right %}
+  {% if staff and staff.image %}
+    <img src="{{ staff.image.url }}" class="topbar-avatar" alt="{{ staff.name }}"/>
+  {% elif staff %}
+    <div style="width:36px;height:36px;background:#4f46e5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600">
+      {{ staff.name|first|upper }}
+    </div>
+  {% endif %}
+{% endblock %}

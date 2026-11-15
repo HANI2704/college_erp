@@ -1,0 +1,24 @@
+{% extends "faculty/base_faculty.html" %}
+{% load erp_tags %}
+{% block title %}My Timetable{% endblock %}
+{% block page_title %}My Timetable{% endblock %}
+{% block content %}
+{% for day in days %}
+  {% with entries=timetable_by_day|get_item:day %}
+    {% if entries %}
+      <div class="card mb-3">
+        <div class="card-header py-2 d-flex align-items-center gap-2">
+          <span class="badge bg-primary" style="font-size:.8rem">{{ day }}</span>
+          <span class="text-muted" style="font-size:.8rem">{{ entries|length }} class(es)</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive"><table class="table mb-0" style="font-size:.85rem"><thead><tr><th>Time</th><th>Subject</th><th>Room</th><th>Class</th></tr></thead><tbody>{% for e in entries %}<tr><td class="fw-semibold text-primary">{{ e.time_slot }}</td><td>{{ e.subject }}</td><td>{{ e.room }}</td><td>{{ e.class_name }}</td></tr>{% endfor %}</tbody></table></div>
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endfor %}
+{% if not timetable_by_day %}
+  <div class="card"><div class="card-body text-center py-5 text-muted"><i class="bi bi-clock" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No timetable assigned yet</div></div></div>
+{% endif %}
+{% endblock %}

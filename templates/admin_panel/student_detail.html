@@ -1,0 +1,38 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Student Detail{% endblock %}
+{% block page_title %}Student Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card text-center">
+      <div class="card-body p-4">
+        {% if student.image %}<img src="{{ student.image.url }}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #4f46e5;margin-bottom:1rem"/>{% else %}<div style="width:100px;height:100px;border-radius:50%;background:#4f46e5;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:white;margin:auto auto 1rem">{{ student.name|first|upper }}</div>{% endif %}
+        <h5 class="fw-bold mb-1">{{ student.name }}</h5>
+        <p class="text-muted mb-1" style="font-size:.85rem">{{ student.branch }} &bull; {{ student.student_class }}</p>
+        <span class="badge bg-primary">PRN: {{ student.prnno }}</span>
+        <hr/>
+        <div style="font-size:.85rem" class="text-start">
+          <div class="mb-1"><i class="bi bi-envelope me-2 text-muted"></i>{{ student.email }}</div>
+          <div class="mb-1"><i class="bi bi-phone me-2 text-muted"></i>{{ student.std_mo }}</div>
+          <div><i class="bi bi-geo-alt me-2 text-muted"></i>{{ student.address|truncatechars:60 }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-bar-chart text-primary me-2"></i>Results ({{ results|length }})</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive"><table class="table mb-0" style="font-size:.85rem"><thead><tr><th>Subject</th><th>Exam</th><th>Marks</th><th>Grade</th></tr></thead><tbody>{% for r in results %}<tr><td>{{ r.subject.subject_name }}</td><td>{{ r.exam_type }}</td><td>{{ r.marks_obtained }}/{{ r.total_marks }}</td><td><span class="badge bg-primary">{{ r.grade }}</span></td></tr>{% empty %}<tr><td colspan="4" class="text-center py-3 text-muted">No results</td></tr>{% endfor %}</tbody></table></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-journal-check text-success me-2"></i>Submissions ({{ submissions|length }})</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive"><table class="table mb-0" style="font-size:.85rem"><thead><tr><th>Assignment</th><th>Submitted</th><th>Status</th><th>Marks</th></tr></thead><tbody>{% for s in submissions %}<tr><td>{{ s.assignment.title }}</td><td>{{ s.submitted_at|date:"d M Y" }}</td><td><span class="badge {% if s.status == 'graded' %}bg-success{% else %}bg-info{% endif %}">{{ s.get_status_display }}</span></td><td>{{ s.marks_obtained|default:"—" }}</td></tr>{% empty %}<tr><td colspan="4" class="text-center py-3 text-muted">No submissions</td></tr>{% endfor %}</tbody></table></div>
+      </div>
+    </div>
+  </div>
+</div>
+<a href="{% url 'admin_students' %}" class="btn btn-outline-secondary rounded-3 mt-3"><i class="bi bi-arrow-left me-1"></i>Back to Students</a>
+{% endblock %}

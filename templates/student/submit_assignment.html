@@ -1,0 +1,33 @@
+{% extends "student/base_student.html" %}
+{% block title %}Submit Assignment{% endblock %}
+{% block page_title %}Submit Assignment{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card mb-3" style="background:#f8fafc">
+      <div class="card-body">
+        <h6 class="fw-bold mb-1">{{ assignment.title }}</h6>
+        <div class="text-muted" style="font-size:.85rem">{{ assignment.subject.subject_name }} &bull; By {{ assignment.created_by.name }}</div>
+        <div class="mt-2" style="font-size:.85rem">{{ assignment.description }}</div>
+        <div class="mt-2 d-flex gap-3 flex-wrap" style="font-size:.82rem">
+          <span class="{% if assignment.is_overdue %}text-danger{% else %}text-success{% endif %}"><i class="bi bi-clock me-1"></i>Due: {{ assignment.due_date|date:"d M Y, h:i A" }}</span>
+          <span class="text-muted"><i class="bi bi-trophy me-1"></i>Total Marks: {{ assignment.total_marks }}</span>
+          {% if assignment.file %}<a href="{{ assignment.file.url }}" class="btn btn-xs btn-outline-primary rounded-3" style="font-size:.78rem;padding:.2rem .6rem" download><i class="bi bi-download me-1"></i>Download Question</a>{% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-upload text-primary me-2"></i>Upload Your Submission</h6></div>
+      <div class="card-body p-4">
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.85rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'student_assignments' %}" class="btn btn-outline-secondary rounded-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+            <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-upload me-2"></i>Submit Assignment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

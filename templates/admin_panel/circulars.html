@@ -1,0 +1,56 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Circulars{% endblock %}
+{% block page_title %}Manage Circulars{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Add Circular</h6></div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size:.85rem">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}<div class="text-danger" style="font-size:.8rem">{{ field.errors.0 }}</div>{% endif %}
+            </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-send me-2"></i>Publish Circular</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-megaphone-fill text-warning me-2"></i>All Circulars ({{ circulars|length }})</h6></div>
+      <div class="card-body p-0">
+        {% for circ in circulars %}
+          <div class="p-3 border-bottom">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                {% if circ.is_pinned %}<i class="bi bi-pin-fill text-danger me-1" style="font-size:.75rem"></i>{% endif %}
+                <span class="fw-semibold" style="font-size:.875rem">{{ circ.title }}</span>
+                <div class="text-muted mt-1" style="font-size:.8rem">{{ circ.description|truncatechars:80 }}</div>
+                <div class="mt-1 d-flex gap-2 flex-wrap">
+                  <span class="badge bg-light text-dark">{{ circ.get_target_audience_display }}</span>
+                  {% if circ.department %}<span class="badge bg-light text-dark">{{ circ.get_department_display }}</span>{% endif %}
+                  <span class="text-muted" style="font-size:.75rem"><i class="bi bi-calendar me-1"></i>{{ circ.publish_date|date:"d M Y" }}</span>
+                </div>
+              </div>
+              <div class="d-flex gap-1 ms-2">
+                <a href="{% url 'edit_circular' circ.id %}" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-pencil"></i></a>
+                <form method="POST" action="{% url 'delete_circular' circ.id %}" onsubmit="return confirm('Delete?')">
+                  {% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="text-center py-5 text-muted"><i class="bi bi-megaphone" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No circulars yet</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "student/base_student.html" %}
+{% block title %}Old Exam Papers{% endblock %}
+{% block page_title %}Old Exam Papers{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>Previous Year Papers</h6></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Course</th><th>Subject</th><th>Season</th><th>Branch</th><th>Download</th></tr></thead>
+        <tbody>
+          {% for p in papers %}
+            <tr>
+              <td style="font-size:.875rem">{{ p.course.name }}</td>
+              <td style="font-size:.875rem">{{ p.subject.subject_name }}</td>
+              <td><span class="badge bg-light text-dark">{{ p.season }}</span></td>
+              <td style="font-size:.85rem">{{ p.branch }}</td>
+              <td><a href="{{ p.file.url }}" class="btn btn-sm btn-outline-danger rounded-3" download><i class="bi bi-download me-1"></i>PDF</a></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" class="text-center py-5 text-muted"><i class="bi bi-file-earmark-x" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No exam papers available</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Results{% endblock %}
+{% block page_title %}Upload Results{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'upload_result' %}" class="btn btn-primary rounded-3"><i class="bi bi-upload me-2"></i>Upload Result</a>
+</div>
+<div class="card">
+  <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Uploaded Results ({{ results|length }})</h6></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Student</th><th>Subject</th><th>Exam</th><th>Marks</th><th>Grade</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for r in results %}
+            <tr>
+              <td style="font-size:.875rem">{{ r.student.name }}<div class="text-muted" style="font-size:.75rem">{{ r.student.prnno }}</div></td>
+              <td style="font-size:.875rem">{{ r.subject.subject_name }}</td>
+              <td style="font-size:.85rem">{{ r.exam_type }}</td>
+              <td class="fw-semibold">{{ r.marks_obtained }}/{{ r.total_marks }} <span class="text-muted" style="font-size:.75rem">({{ r.percentage }}%)</span></td>
+              <td><span class="badge {% if r.grade == 'F' %}bg-danger{% elif r.grade in 'O,A+' %}bg-success{% else %}bg-primary{% endif %}">{{ r.grade }}</span></td>
+              <td><a href="{% url 'edit_result' r.id %}" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-pencil"></i></a></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-clipboard-x" style="font-size:2rem;color:#cbd5e1"></i><div class="mt-2">No results uploaded yet</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

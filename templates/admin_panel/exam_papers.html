@@ -1,0 +1,57 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Exam Papers{% endblock %}
+{% block page_title %}Old Exam Papers{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-upload text-primary me-2"></i>Upload Paper</h6></div>
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-upload me-2"></i>Upload</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus text-secondary me-2"></i>Add Exam Season</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in season_form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" name="add_season" class="btn btn-outline-secondary w-100 rounded-3">Add Season</button>
+        </form>
+        <div class="mt-2">{% for s in seasons %}<span class="badge bg-light text-dark me-1">{{ s }}</span>{% endfor %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>Papers ({{ papers|length }})</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0" style="font-size:.82rem">
+            <thead><tr><th>Course</th><th>Subject</th><th>Season</th><th>Branch</th><th>Upload</th><th></th></tr></thead>
+            <tbody>
+              {% for p in papers %}
+                <tr>
+                  <td>{{ p.course.name }}</td>
+                  <td>{{ p.subject.subject_name }}</td>
+                  <td>{{ p.season }}</td>
+                  <td>{{ p.branch }}</td>
+                  <td>{{ p.uploaded_at|date:"d M Y" }}</td>
+                  <td class="d-flex gap-1">
+                    <a href="{{ p.file.url }}" class="btn btn-sm btn-outline-success rounded-3" download><i class="bi bi-download"></i></a>
+                    <form method="POST" action="{% url 'delete_exam_paper' p.id %}" onsubmit="return confirm('Delete?')">{% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button></form>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No papers uploaded</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

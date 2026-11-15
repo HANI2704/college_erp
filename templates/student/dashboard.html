@@ -1,0 +1,233 @@
+{% extends "student/base_student.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome Banner -->
+<div class="card mb-4" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border:none;border-radius:16px">
+  <div class="card-body p-4 text-white d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+      <h4 class="fw-bold mb-1">Welcome back, {{ student.name }}! 👋</h4>
+      <p class="mb-0 opacity-75">{{ student.branch }} &bull; {{ student.student_class }} &bull; PRN: {{ student.prnno }}</p>
+    </div>
+    {% if student.image %}
+      <img src="{{ student.image.url }}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.4)"/>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-card bg-indigo">
+      <div class="stat-icon"><i class="bi bi-journal-check"></i></div>
+      <div>
+        <div class="stat-value">{{ upcoming_assignments|length }}</div>
+        <div class="stat-label">Pending Assignments</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card bg-teal">
+      <div class="stat-icon"><i class="bi bi-calendar-check-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ attendance_pct }}%</div>
+        <div class="stat-label">Attendance</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card bg-amber">
+      <div class="stat-icon"><i class="bi bi-megaphone-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ recent_circulars|length }}</div>
+        <div class="stat-label">New Circulars</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card bg-rose">
+      <div class="stat-icon"><i class="bi bi-door-open-fill"></i></div>
+      <div>
+        <div class="stat-value">{{ pending_leave }}</div>
+        <div class="stat-label">Leave Pending</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Upcoming Assignments -->
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-journal-check text-primary me-2"></i>Upcoming Assignments</h6>
+        <a href="{% url 'student_assignments' %}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+      </div>
+      <div class="card-body p-0">
+        {% if upcoming_assignments %}
+          <div class="list-group list-group-flush">
+            {% for assignment in upcoming_assignments %}
+              <div class="list-group-item px-4 py-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <div class="fw-semibold" style="font-size:.9rem">{{ assignment.title }}</div>
+                    <div class="text-muted" style="font-size:.8rem">
+                      <i class="bi bi-book me-1"></i>{{ assignment.subject.subject_name }}
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <div style="font-size:.75rem" class="text-muted">Due</div>
+                    <span class="badge {% if assignment.is_overdue %}bg-danger{% else %}bg-warning text-dark{% endif %} rounded-pill">
+                      {{ assignment.due_date|date:"d M" }}
+                    </span>
+                    {% if assignment.id in submitted_ids %}
+                      <div><span class="badge bg-success rounded-pill mt-1">Submitted</span></div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-check-circle" style="font-size:2rem;color:#10b981"></i>
+            <div class="mt-2">No pending assignments!</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="col-lg-5 d-flex flex-column gap-4">
+    <!-- Attendance Overview -->
+    <div class="card">
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-pie-chart-fill text-success me-2"></i>Attendance Overview</h6>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span style="font-size:.875rem">Overall Attendance</span>
+          <strong class="{% if attendance_pct >= 75 %}text-success{% else %}text-danger{% endif %}">{{ attendance_pct }}%</strong>
+        </div>
+        <div class="progress mb-3" style="height:10px">
+          <div class="progress-bar {% if attendance_pct >= 75 %}bg-success{% else %}bg-danger{% endif %}"
+               style="width:{{ attendance_pct }}%"></div>
+        </div>
+        <div class="d-flex justify-content-between text-muted" style="font-size:.8rem">
+          <span><i class="bi bi-check-circle text-success me-1"></i>{{ present_classes }} Present</span>
+          <span><i class="bi bi-x-circle text-danger me-1"></i>{{ total_classes|add:"-"|add:present_classes }} Absent</span>
+          <span><i class="bi bi-collection me-1"></i>{{ total_classes }} Total</span>
+        </div>
+        {% if attendance_pct < 75 %}
+          <div class="alert alert-warning mt-3 py-2 px-3" style="font-size:.8rem;border-radius:8px">
+            <i class="bi bi-exclamation-triangle me-1"></i>
+            Attendance below 75%. Attend more classes.
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Recent Results -->
+    <div class="card">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-bar-chart-fill text-warning me-2"></i>Recent Results</h6>
+        <a href="{% url 'student_results' %}" class="btn btn-sm btn-outline-warning rounded-pill">View All</a>
+      </div>
+      <div class="card-body p-0">
+        {% if recent_results %}
+          <div class="list-group list-group-flush">
+            {% for result in recent_results %}
+              <div class="list-group-item d-flex justify-content-between align-items-center px-3 py-2">
+                <div>
+                  <div style="font-size:.85rem;font-weight:500">{{ result.subject.subject_name }}</div>
+                  <div class="text-muted" style="font-size:.75rem">{{ result.exam_type }}</div>
+                </div>
+                <div class="text-end">
+                  <div class="fw-bold" style="font-size:.9rem">{{ result.marks_obtained }}/{{ result.total_marks }}</div>
+                  <span class="badge {% if result.grade == 'F' %}bg-danger{% elif result.grade == 'O' or result.grade == 'A+' %}bg-success{% else %}bg-primary{% endif %}">
+                    {{ result.grade }}
+                  </span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center py-4 text-muted" style="font-size:.875rem">No results published yet</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom row: Circulars, Notifications, Events -->
+<div class="row g-4 mt-1">
+  <!-- Circulars -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-megaphone-fill text-warning me-2"></i>Circulars</h6>
+        <a href="{% url 'student_circulars' %}" class="btn btn-sm btn-outline-warning rounded-pill">All</a>
+      </div>
+      <div class="card-body p-0">
+        {% for circular in recent_circulars %}
+          <div class="p-3 border-bottom">
+            {% if circular.is_pinned %}<i class="bi bi-pin-angle-fill text-danger me-1" style="font-size:.8rem"></i>{% endif %}
+            <div style="font-size:.85rem;font-weight:500">{{ circular.title }}</div>
+            <div class="text-muted" style="font-size:.75rem">{{ circular.publish_date|date:"d M Y" }}</div>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.85rem">No circulars</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-bell-fill text-info me-2"></i>Notifications</h6>
+        <a href="{% url 'student_notifications' %}" class="btn btn-sm btn-outline-info rounded-pill">All</a>
+      </div>
+      <div class="card-body p-0">
+        {% for notif in notifications %}
+          <div class="p-3 border-bottom">
+            <div style="font-size:.85rem;font-weight:500">{{ notif.title }}</div>
+            <div class="text-muted" style="font-size:.75rem">{{ notif.created_at|date:"d M Y" }} &bull; {{ notif.created_by.name }}</div>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.85rem">No new notifications</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Events -->
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-calendar-event-fill text-purple me-2" style="color:#7c3aed"></i>Events</h6>
+        <a href="{% url 'student_events' %}" class="btn btn-sm rounded-pill" style="border:1px solid #7c3aed;color:#7c3aed">All</a>
+      </div>
+      <div class="card-body p-0">
+        {% for event in upcoming_events %}
+          <div class="p-3 border-bottom d-flex gap-3 align-items-start">
+            <div class="text-center" style="min-width:40px;background:#eef2ff;border-radius:8px;padding:4px">
+              <div style="font-size:.7rem;font-weight:700;color:#4f46e5;text-transform:uppercase">{{ event.start_date|date:"M" }}</div>
+              <div style="font-size:1.1rem;font-weight:700;color:#1e1b4b">{{ event.start_date|date:"d" }}</div>
+            </div>
+            <div>
+              <div style="font-size:.85rem;font-weight:500">{{ event.event_name }}</div>
+              <div class="text-muted" style="font-size:.75rem"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.85rem">No upcoming events</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

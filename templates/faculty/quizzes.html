@@ -1,0 +1,28 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Quizzes{% endblock %}
+{% block page_title %}Manage Quizzes{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'create_quiz' %}" class="btn btn-primary rounded-3"><i class="bi bi-plus-circle me-2"></i>Create Quiz</a>
+</div>
+<div class="card">
+  <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-patch-question-fill text-primary me-2"></i>My Quizzes ({{ quizzes|length }})</h6></div>
+  <div class="card-body p-0">
+    {% for quiz in quizzes %}
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-start">
+        <div>
+          <div class="fw-semibold" style="font-size:.875rem">{{ quiz.title }}</div>
+          <div class="text-muted" style="font-size:.8rem">{{ quiz.subject.subject_name }} &bull; {{ quiz.total_marks }} marks &bull; {{ quiz.duration_minutes }} min</div>
+          <div class="text-muted" style="font-size:.78rem"><i class="bi bi-calendar me-1"></i>{{ quiz.start_time|date:"d M Y, h:i A" }} → {{ quiz.end_time|date:"d M Y, h:i A" }}</div>
+        </div>
+        <div class="d-flex gap-1">
+          <a href="{% url 'add_quiz_questions' quiz.id %}" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-question-circle me-1"></i>Questions ({{ quiz.questions.count }})</a>
+          <span class="badge {% if quiz.is_active %}bg-success{% else %}bg-secondary{% endif %} align-self-center">{{ quiz.is_active|yesno:"Active,Inactive" }}</span>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-center py-5 text-muted"><i class="bi bi-patch-question" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No quizzes created</div><a href="{% url 'create_quiz' %}" class="btn btn-primary mt-3 rounded-3">Create First Quiz</a></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

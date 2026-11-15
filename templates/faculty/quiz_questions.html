@@ -1,0 +1,48 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Quiz Questions{% endblock %}
+{% block page_title %}Add Quiz Questions{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card mb-3" style="background:#f8fafc">
+      <div class="card-body py-2 px-3">
+        <div class="fw-semibold">{{ quiz.title }}</div>
+        <div class="text-muted" style="font-size:.8rem">{{ quiz.subject.subject_name }} &bull; {{ quiz.total_marks }} marks &bull; {{ quiz.questions.count }} questions added</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Add Question</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3">Add Question</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-list-ol text-primary me-2"></i>Questions ({{ questions|length }})</h6>
+        <a href="{% url 'faculty_quizzes' %}" class="btn btn-sm btn-success rounded-3"><i class="bi bi-check me-1"></i>Done</a>
+      </div>
+      <div class="card-body p-0">
+        {% for q in questions %}
+          <div class="p-3 border-bottom">
+            <div class="fw-semibold" style="font-size:.875rem">Q{{ q.order }}. {{ q.question_text }}</div>
+            <div class="mt-1 row g-1" style="font-size:.8rem">
+              <div class="col-6"><span class="{% if q.correct_option == 'A' %}text-success fw-bold{% else %}text-muted{% endif %}">A) {{ q.option_a }}</span></div>
+              <div class="col-6"><span class="{% if q.correct_option == 'B' %}text-success fw-bold{% else %}text-muted{% endif %}">B) {{ q.option_b }}</span></div>
+              <div class="col-6"><span class="{% if q.correct_option == 'C' %}text-success fw-bold{% else %}text-muted{% endif %}">C) {{ q.option_c }}</span></div>
+              <div class="col-6"><span class="{% if q.correct_option == 'D' %}text-success fw-bold{% else %}text-muted{% endif %}">D) {{ q.option_d }}</span></div>
+            </div>
+            <div class="mt-1"><span class="badge bg-success">Correct: {{ q.correct_option }}</span><span class="badge bg-light text-dark ms-1">{{ q.marks }} mark(s)</span></div>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.875rem">No questions yet. Add your first question.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

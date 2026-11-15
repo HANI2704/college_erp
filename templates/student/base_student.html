@@ -1,0 +1,50 @@
+{% extends "base/layout.html" %}
+
+{% block sidebar_user %}
+  {% if student.image %}
+    <img src="{{ student.image.url }}" alt="{{ student.name }}"/>
+  {% else %}
+    <div class="user-avatar-placeholder">{{ student.name|first|upper }}</div>
+  {% endif %}
+  <div class="user-info">
+    <div class="user-name">{{ student.name }}</div>
+    <span class="user-role">Student</span>
+  </div>
+{% endblock %}
+
+{% block sidebar_nav %}
+  <div class="sidebar-section-label">Main</div>
+  <a href="{% url 'student_dashboard' %}"><i class="bi bi-grid-fill"></i> Dashboard</a>
+  <a href="{% url 'student_profile' %}"><i class="bi bi-person-circle"></i> My Profile</a>
+
+  <div class="sidebar-section-label">Academics</div>
+  <a href="{% url 'student_assignments' %}"><i class="bi bi-journal-check"></i> Assignments</a>
+  <a href="{% url 'student_results' %}"><i class="bi bi-bar-chart-fill"></i> Results</a>
+  <a href="{% url 'student_attendance' %}"><i class="bi bi-calendar-check-fill"></i> Attendance</a>
+  <a href="{% url 'student_timetable' %}"><i class="bi bi-clock-fill"></i> Timetable</a>
+  <a href="{% url 'student_quizzes' %}"><i class="bi bi-patch-question-fill"></i> Quizzes</a>
+
+  <div class="sidebar-section-label">Learning</div>
+  <a href="{% url 'student_notes' %}"><i class="bi bi-file-earmark-text-fill"></i> Notes</a>
+  <a href="{% url 'student_lessons' %}"><i class="bi bi-play-circle-fill"></i> Lessons</a>
+  <a href="{% url 'student_exam_papers' %}"><i class="bi bi-file-earmark-pdf-fill"></i> Old Papers</a>
+
+  <div class="sidebar-section-label">Campus</div>
+  <a href="{% url 'student_circulars' %}"><i class="bi bi-megaphone-fill"></i> Circulars</a>
+  <a href="{% url 'student_events' %}"><i class="bi bi-calendar-event-fill"></i> Events</a>
+  <a href="{% url 'student_notifications' %}"><i class="bi bi-bell-fill"></i> Notifications</a>
+
+  <div class="sidebar-section-label">Support</div>
+  <a href="{% url 'student_leave' %}"><i class="bi bi-door-open-fill"></i> Leave Request</a>
+  <a href="{% url 'student_feedback' %}"><i class="bi bi-chat-dots-fill"></i> Feedback</a>
+{% endblock %}
+
+{% block topbar_right %}
+  {% if student.image %}
+    <img src="{{ student.image.url }}" class="topbar-avatar" alt="{{ student.name }}"/>
+  {% else %}
+    <div style="width:36px;height:36px;background:#4f46e5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600">
+      {{ student.name|first|upper }}
+    </div>
+  {% endif %}
+{% endblock %}

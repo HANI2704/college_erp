@@ -1,0 +1,46 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Sessions{% endblock %}
+{% block page_title %}Academic Sessions{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Add Session</h6></div>
+      <div class="card-body">
+        <form method="POST" action="{% url 'admin_sessions' %}">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3">Add Session</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-calendar-range-fill text-primary me-2"></i>Sessions ({{ sessions|length }})</h6></div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead><tr><th>#</th><th>Start Date</th><th>End Date</th><th>Action</th></tr></thead>
+            <tbody>
+              {% for session in sessions %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ session.session_start|date:"d M Y" }}</td>
+                  <td>{{ session.session_end|date:"d M Y" }}</td>
+                  <td>
+                    <form method="POST" action="{% url 'delete_session' session.id %}" onsubmit="return confirm('Delete?')">
+                      {% csrf_token %}<button class="btn btn-sm btn-outline-danger rounded-3"><i class="bi bi-trash"></i></button>
+                    </form>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="4" class="text-center py-4 text-muted">No sessions</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

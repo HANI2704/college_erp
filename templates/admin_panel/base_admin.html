@@ -1,0 +1,49 @@
+{% extends "base/layout.html" %}
+
+{% block sidebar_user %}
+  <div class="user-avatar-placeholder">A</div>
+  <div class="user-info">
+    <div class="user-name">{{ request.user.get_full_name|default:request.user.username }}</div>
+    <span class="user-role">Administrator</span>
+  </div>
+{% endblock %}
+
+{% block sidebar_nav %}
+  <div class="sidebar-section-label">Main</div>
+  <a href="{% url 'admin_dashboard' %}"><i class="bi bi-grid-fill"></i> Dashboard</a>
+
+  <div class="sidebar-section-label">People</div>
+  <a href="{% url 'admin_students' %}"><i class="bi bi-person-fill"></i> Students</a>
+  <a href="{% url 'admin_staff_list' %}"><i class="bi bi-person-badge-fill"></i> Staff</a>
+
+  <div class="sidebar-section-label">Academics</div>
+  <a href="{% url 'admin_constituent' %}"><i class="bi bi-building-fill"></i> Constituent Colleges</a>
+  <a href="{% url 'admin_departments' %}"><i class="bi bi-building-fill"></i> Departments</a>
+  <a href="{% url 'admin_courses' %}"><i class="bi bi-mortarboard-fill"></i> Courses</a>
+  <a href="{% url 'admin_subjects' %}"><i class="bi bi-book-fill"></i> Subjects</a>
+  <a href="{% url 'admin_timetable' %}"><i class="bi bi-clock-fill"></i> Timetable</a>
+  <a href="{% url 'admin_sessions' %}"><i class="bi bi-calendar-range-fill"></i> Sessions</a>
+
+  <div class="sidebar-section-label">Content</div>
+  <a href="{% url 'admin_circulars' %}"><i class="bi bi-megaphone-fill"></i> Circulars</a>
+  <a href="{% url 'admin_events' %}"><i class="bi bi-calendar-event-fill"></i> Events</a>
+  <a href="{% url 'admin_notifications' %}"><i class="bi bi-bell-fill"></i> Notifications</a>
+  <a href="{% url 'admin_exam_papers' %}"><i class="bi bi-file-earmark-pdf-fill"></i> Exam Papers</a>
+
+  <div class="sidebar-section-label">Reports</div>
+  <a href="{% url 'admin_attendance_report' %}"><i class="bi bi-bar-chart-fill"></i> Attendance Report</a>
+  <a href="{% url 'admin_transport' %}"><i class="bi bi-bus-front-fill"></i> Transport</a>
+  <a href="{% url 'admin_alumni' %}"><i class="bi bi-people-fill"></i> Alumni</a>
+
+  <div class="sidebar-section-label">Settings</div>
+  <a href="{% url 'admin_change_password' %}">
+    <i class="bi bi-key-fill"></i> Change Password
+  </a>
+
+{% endblock %}
+
+{% block topbar_right %}
+  <div style="width:36px;height:36px;background:#4f46e5;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:600">
+    A
+  </div>
+{% endblock %}

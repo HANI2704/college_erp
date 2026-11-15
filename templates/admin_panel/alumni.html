@@ -1,0 +1,130 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Alumni{% endblock %}
+{% block page_title %}Alumni Directory{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- ADD FORM -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-person-plus text-primary me-2"></i>Add Alumni
+        </h6>
+      </div>
+
+      <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="mb-3">
+              <label class="form-label fw-semibold" style="font-size:.82rem">
+                {{ field.label }}
+              </label>
+
+              {{ field }}
+
+              {% if field.errors %}
+                <div class="text-danger small">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <button type="submit" class="btn btn-primary w-100 rounded-3">
+            Add Alumni
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="col-lg-8">
+    <div class="card">
+
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-people-fill text-primary me-2"></i>
+          Alumni ({{ alumni_list|length }})
+        </h6>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+
+          <table class="table mb-0" style="font-size:.85rem">
+
+            <!-- HEADER -->
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Batch</th>
+                <th>College</th>
+                <th>Department</th>
+                <th>Course</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <!-- BODY -->
+            <tbody>
+              {% for a in alumni_list %}
+              <tr>
+
+                <td class="fw-semibold">
+                  {{ a.full_name }}
+                </td>
+
+                <td>{{ a.batch }}</td>
+
+                <td>{{ a.constituent_college|default:"—" }}</td>
+
+                <td>{{ a.department|default:"—" }}</td>
+
+                <td>{{ a.course|default:"—" }}</td>
+
+                <td>{{ a.email }}</td>
+
+                <td>{{ a.mobile_number }}</td>
+
+                <td>
+                  <form method="POST"
+                        action="{% url 'delete_alumni' a.id %}"
+                        onsubmit="return confirm('Delete?')">
+
+                    {% csrf_token %}
+
+                    <button class="btn btn-sm btn-outline-danger rounded-3">
+                      <i class="bi bi-trash"></i>
+                    </button>
+
+                  </form>
+                </td>
+
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="8" class="text-center py-4 text-muted">
+                  No alumni records
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

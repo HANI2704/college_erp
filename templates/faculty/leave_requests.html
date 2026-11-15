@@ -1,0 +1,36 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Leave Requests{% endblock %}
+{% block page_title %}Student Leave Requests{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-door-open-fill text-primary me-2"></i>Pending Leave Requests ({{ leave_requests|length }})</h6></div>
+  <div class="card-body p-0">
+    {% for leave in leave_requests %}
+      <div class="p-4 border-bottom">
+        <div class="row g-3 align-items-start">
+          <div class="col-md-7">
+            <div class="fw-semibold">{{ leave.student.name }} <span class="text-muted fw-normal" style="font-size:.85rem">({{ leave.student.prnno }})</span></div>
+            <div class="mt-1 d-flex gap-3 flex-wrap" style="font-size:.85rem">
+              <span><i class="bi bi-tag me-1 text-muted"></i>{{ leave.get_leave_type_display }}</span>
+              <span><i class="bi bi-calendar me-1 text-muted"></i>{{ leave.from_date|date:"d M" }} → {{ leave.to_date|date:"d M Y" }}</span>
+            </div>
+            <div class="mt-1 text-muted" style="font-size:.85rem">{{ leave.reason }}</div>
+            {% if leave.document %}<a href="{{ leave.document.url }}" class="btn btn-xs btn-outline-secondary mt-2 rounded-3" style="font-size:.78rem;padding:.2rem .6rem" download><i class="bi bi-paperclip me-1"></i>Document</a>{% endif %}
+          </div>
+          <div class="col-md-5">
+            <form method="POST" action="{% url 'approve_leave' leave.id %}">{% csrf_token %}
+              <textarea name="remarks" class="form-control form-control-sm mb-2" rows="2" placeholder="Remarks (optional)"></textarea>
+              <div class="d-flex gap-2">
+                <button type="submit" name="action" value="approve" class="btn btn-success btn-sm rounded-3 flex-grow-1"><i class="bi bi-check-circle me-1"></i>Approve</button>
+                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm rounded-3 flex-grow-1"><i class="bi bi-x-circle me-1"></i>Reject</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-center py-5 text-muted"><i class="bi bi-check-all" style="font-size:2.5rem;color:#10b981"></i><div class="mt-2 fw-semibold">No pending leave requests</div></div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

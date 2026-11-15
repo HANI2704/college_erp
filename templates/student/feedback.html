@@ -1,0 +1,35 @@
+{% extends "student/base_student.html" %}
+{% block title %}Feedback{% endblock %}
+{% block page_title %}Send Feedback{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-chat-dots-fill text-primary me-2"></i>Send Feedback</h6></div>
+      <div class="card-body">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.85rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3"><i class="bi bi-send me-2"></i>Send Feedback</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-chat-left-text-fill me-2"></i>My Feedbacks</h6></div>
+      <div class="card-body p-0">
+        {% for fb in feedbacks %}
+          <div class="p-3 border-bottom">
+            <div class="fw-semibold" style="font-size:.875rem">{{ fb.subject_text }}</div>
+            <div class="text-muted" style="font-size:.8rem">To: {{ fb.faculty|default:"General" }} &bull; {{ fb.created_at|date:"d M Y" }}</div>
+            <div class="mt-1 p-2 rounded-2" style="background:#f8fafc;font-size:.85rem">{{ fb.message }}</div>
+            {% if fb.reply %}<div class="mt-2 p-2 rounded-2" style="background:#f0fdf4;font-size:.85rem;border-left:3px solid #10b981"><strong class="text-success">Reply:</strong> {{ fb.reply }}</div>{% endif %}
+          </div>
+        {% empty %}
+          <div class="text-center py-5 text-muted"><i class="bi bi-chat-square" style="font-size:2.5rem;color:#cbd5e1"></i><div class="mt-2">No feedbacks sent</div></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

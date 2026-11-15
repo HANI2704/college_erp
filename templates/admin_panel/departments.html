@@ -1,0 +1,233 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Departments{% endblock %}
+{% block page_title %}Manage Departments{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- LEFT: Add Department -->
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-plus-circle text-primary me-2"></i>
+          Add Department
+        </h6>
+      </div>
+
+      <div class="card-body">
+
+        <form method="POST" enctype="multipart/form-data">
+
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">
+              Constituent College
+            </label>
+
+            {{ form.constituent_college }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">
+              Department Name
+            </label>
+
+            {{ form.name }}
+          </div>
+
+          {% for field in form %}
+
+            {% if field.name != "constituent_college" and field.name != "name" %}
+
+              <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                  {{ field.label }}
+                </label>
+
+                {{ field }}
+
+              </div>
+
+            {% endif %}
+
+          {% endfor %}
+
+          <button type="submit"
+                  class="btn btn-primary w-100 rounded-3">
+
+            Add Department
+
+          </button>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- RIGHT: Department List -->
+  <div class="col-lg-8">
+    <div class="card">
+
+      <div class="card-header py-3">
+        <h6 class="mb-0 fw-semibold">
+          <i class="bi bi-building-fill text-primary me-2"></i>
+          Departments ({{ departments|length }})
+        </h6>
+      </div>
+
+      <div class="card-body p-0">
+
+        <!-- ✅ FILTER DROPDOWN ADDED HERE -->
+        
+<!-- COLLEGE FILTER DROPDOWN -->
+<div class="p-3">
+    <form method="GET">
+        <select name="college"
+                class="form-select"
+                onchange="this.form.submit()">
+
+            <option value="">All Colleges</option>
+
+            {% for c in colleges %}
+                <option value="{{ c.name }}"
+                    {% if selected_college == c.name %}selected{% endif %}>
+                    {{ c.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </form>
+</div>
+
+
+        <div class="table-responsive">
+          <table class="table mb-0">
+
+            <thead>
+              <tr>
+                <th>Constituent College</th>
+                <th>Name</th>
+                <th>Code</th>
+                <th>HOD</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for dept in departments %}
+              <tr>
+
+                <td style="font-size:.85rem">
+                  {{ dept.constituent_college }}
+                </td>
+
+                <td class="fw-semibold" style="font-size:.875rem">
+                  {{ dept.name }}
+                </td>
+
+                <td>
+                  <span class="badge bg-light text-dark">
+                    {{ dept.code }}
+                  </span>
+                </td>
+
+                <td style="font-size:.85rem">
+                  {{ dept.hod|default:"—" }}
+                </td>
+
+                <td>
+                  <span class="badge {% if dept.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                    {{ dept.is_active|yesno:"Active,Inactive" }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="d-flex gap-1">
+
+                    <a href="{% url 'edit_department' dept.id %}"
+                       class="btn btn-sm btn-outline-primary rounded-3">
+                       <i class="bi bi-pencil"></i>
+                    </a>
+
+                    <form method="POST"
+                          action="{% url 'delete_department' dept.id %}"
+                          onsubmit="return confirm('Delete?')">
+
+                      {% csrf_token %}
+
+                      <button class="btn btn-sm btn-outline-danger rounded-3">
+                        <i class="bi bi-trash"></i>
+                      </button>
+
+                    </form>
+
+                  </div>
+                </td>
+
+              </tr>
+
+              {% empty %}
+              <tr>
+                <td colspan="6" class="text-center py-4 text-muted">
+                  No departments
+                </td>
+              </tr>
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const collegeSelect = document.getElementById("college-select");
+    const departmentSelect = document.getElementById("department-select");
+
+    collegeSelect.addEventListener("change", function () {
+
+        const collegeId = this.value;
+
+        departmentSelect.innerHTML =
+            '<option value="">Loading...</option>';
+
+        fetch(`/get-college-departments/?college_name=${collegeName}`)
+
+            .then(response => response.json())
+
+            .then(data => {
+
+                departmentSelect.innerHTML =
+                    '<option value="">Select Department</option>';
+
+                data.departments.forEach(function (dept) {
+
+                    departmentSelect.innerHTML +=
+                        `<option value="${dept}">
+                            ${dept}
+                        </option>`;
+
+                });
+
+            });
+
+    });
+
+});
+
+</script>

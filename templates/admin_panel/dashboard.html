@@ -1,0 +1,183 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome -->
+<div class="card mb-4" style="background:linear-gradient(135deg,#1e1b4b,#4f46e5);border-radius:16px">
+  <div class="card-body p-4 text-white">
+    <h4 class="fw-bold mb-1">College ERP Administration</h4>
+    <p class="mb-0 opacity-75">Manage students, faculty, departments and all academic activities from one place.</p>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-indigo">
+      <div class="stat-icon"><i class="bi bi-person-fill"></i></div>
+      <div><div class="stat-value">{{ total_students }}</div><div class="stat-label">Students</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-teal">
+      <div class="stat-icon"><i class="bi bi-person-badge-fill"></i></div>
+      <div><div class="stat-value">{{ total_faculty }}</div><div class="stat-label">Faculty</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-amber">
+      <div class="stat-icon"><i class="bi bi-building-fill"></i></div>
+      <div><div class="stat-value">{{ total_departments }}</div><div class="stat-label">Departments</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-emerald">
+      <div class="stat-icon"><i class="bi bi-book-fill"></i></div>
+      <div><div class="stat-value">{{ total_subjects }}</div><div class="stat-label">Subjects</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-violet">
+      <div class="stat-icon"><i class="bi bi-journal-check"></i></div>
+      <div><div class="stat-value">{{ total_assignments }}</div><div class="stat-label">Assignments</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="stat-card bg-rose">
+      <div class="stat-icon"><i class="bi bi-door-open-fill"></i></div>
+      <div><div class="stat-value">{{ pending_leaves }}</div><div class="stat-label">Leave Pending</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent Students -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-person-fill text-primary me-2"></i>Recent Students</h6>
+        <a href="{% url 'admin_students' %}" class="btn btn-sm btn-outline-primary rounded-pill">View All</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead><tr><th>Name</th><th>Branch</th><th>Class</th><th>Joined</th></tr></thead>
+            <tbody>
+              {% for stu in recent_students %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center gap-2">
+                      <div style="width:30px;height:30px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#4f46e5">
+                        {{ stu.name|first|upper }}
+                      </div>
+                      <span style="font-size:.85rem">{{ stu.name }}</span>
+                    </div>
+                  </td>
+                  <td style="font-size:.8rem" class="text-muted">{{ stu.branch }}</td>
+                  <td><span class="badge bg-light text-dark">{{ stu.student_class }}</span></td>
+                  <td style="font-size:.75rem" class="text-muted">{{ stu.created_at|date:"d M" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Staff -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-person-badge-fill text-teal me-2" style="color:#0d9488"></i>Recent Staff</h6>
+        <a href="{% url 'admin_staff_list' %}" class="btn btn-sm rounded-pill" style="border:1px solid #0d9488;color:#0d9488">View All</a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead><tr><th>Name</th><th>Role</th><th>Department</th></tr></thead>
+            <tbody>
+              {% for s in recent_staff %}
+                <tr>
+                  <td style="font-size:.85rem">{{ s.name }}</td>
+                  <td><span class="badge {% if s.role == 'admin' %}bg-danger{% elif s.role == 'hod' %}bg-warning text-dark{% else %}bg-primary{% endif %}">{{ s.get_role_display }}</span></td>
+                  <td style="font-size:.8rem" class="text-muted">{{ s.department|default:"—" }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upcoming Events -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-calendar-event-fill me-2" style="color:#7c3aed"></i>Upcoming Events</h6>
+        <a href="{% url 'admin_events' %}" class="btn btn-sm rounded-pill" style="border:1px solid #7c3aed;color:#7c3aed">Manage</a>
+      </div>
+      <div class="card-body p-0">
+        {% for event in upcoming_events %}
+          <div class="p-3 border-bottom d-flex gap-3 align-items-start">
+            <div class="text-center p-2 rounded-2" style="background:#eef2ff;min-width:48px">
+              <div style="font-size:.65rem;font-weight:700;color:#4f46e5;text-transform:uppercase">{{ event.start_date|date:"M" }}</div>
+              <div style="font-size:1.2rem;font-weight:700;color:#1e1b4b;line-height:1">{{ event.start_date|date:"d" }}</div>
+            </div>
+            <div>
+              <div class="fw-semibold" style="font-size:.875rem">{{ event.event_name }}</div>
+              <div class="text-muted" style="font-size:.75rem"><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</div>
+              <div class="text-muted" style="font-size:.75rem"><i class="bi bi-currency-rupee me-1"></i>{{ event.fees }}</div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.875rem">No upcoming events</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Circulars -->
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-semibold"><i class="bi bi-megaphone-fill text-warning me-2"></i>Recent Circulars</h6>
+        <a href="{% url 'admin_circulars' %}" class="btn btn-sm btn-outline-warning rounded-pill">Manage</a>
+      </div>
+      <div class="card-body p-0">
+        {% for circ in recent_circulars %}
+          <div class="p-3 border-bottom d-flex justify-content-between align-items-start">
+            <div>
+              {% if circ.is_pinned %}<i class="bi bi-pin-fill text-danger me-1" style="font-size:.75rem"></i>{% endif %}
+              <span class="fw-semibold" style="font-size:.875rem">{{ circ.title }}</span>
+              <div class="text-muted" style="font-size:.75rem">{{ circ.publish_date|date:"d M Y" }}</div>
+            </div>
+            <span class="badge {% if circ.target_audience == 'students' %}bg-primary{% elif circ.target_audience == 'faculty' %}bg-success{% else %}bg-secondary{% endif %}">
+              {{ circ.get_target_audience_display }}
+            </span>
+          </div>
+        {% empty %}
+          <div class="text-center py-4 text-muted" style="font-size:.875rem">No circulars</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mt-4">
+  <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-lightning-fill text-warning me-2"></i>Quick Actions</h6></div>
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'add_staff' %}" class="btn btn-outline-primary rounded-3"><i class="bi bi-person-plus me-1"></i>Add Staff</a>
+      <a href="{% url 'register_student' %}" class="btn btn-outline-success rounded-3"><i class="bi bi-person-plus me-1"></i>Add Student</a>
+      <a href="{% url 'admin_circulars' %}" class="btn btn-outline-warning rounded-3"><i class="bi bi-megaphone me-1"></i>Post Circular</a>
+      <a href="{% url 'admin_events' %}" class="btn btn-outline-info rounded-3"><i class="bi bi-calendar-plus me-1"></i>Create Event</a>
+      <a href="{% url 'admin_timetable' %}" class="btn btn-outline-secondary rounded-3"><i class="bi bi-clock me-1"></i>Manage Timetable</a>
+      <a href="{% url 'admin_subjects' %}" class="btn btn-outline-danger rounded-3"><i class="bi bi-book me-1"></i>Add Subject</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

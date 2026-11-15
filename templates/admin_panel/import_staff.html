@@ -1,0 +1,43 @@
+{% extends "admin_panel/base_admin.html" %}
+{% block title %}Import Staff{% endblock %}
+{% block page_title %}Import Staff from Excel{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header">
+    <h6 class="mb-0 fw-semibold">
+      <i class="bi bi-file-earmark-excel text-success me-2"></i>Upload Excel File
+    </h6>
+  </div>
+
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Select Excel File</label>
+        <input type="file" name="excel_file" class="form-control" accept=".xlsx,.xls" required>
+      </div>
+
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-upload me-2"></i>Import Staff
+      </button>
+
+      <a href="{% url 'admin_staff_list' %}" class="btn btn-secondary ms-2">
+        Cancel
+      </a>
+    </form>
+
+    <hr>
+
+    <div class="alert alert-info mt-3">
+      <strong>Note:</strong>
+      <ul class="mb-0">
+        <li>Excel must contain correct column names</li>
+        <li>Department must already exist</li>
+        <li>Default password: <b>changeme123</b></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

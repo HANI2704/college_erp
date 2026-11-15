@@ -1,0 +1,28 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Reply Feedback{% endblock %}
+{% block page_title %}Reply to Feedback{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card mb-3" style="background:#f8fafc">
+      <div class="card-body">
+        <div class="fw-semibold">{{ feedback.subject_text }}</div>
+        <div class="text-muted" style="font-size:.8rem">From: {{ feedback.student.name }} &bull; {{ feedback.created_at|date:"d M Y" }}</div>
+        <div class="mt-2 p-3 rounded-3" style="background:white;font-size:.875rem">{{ feedback.message }}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-reply text-primary me-2"></i>Write Reply</h6></div>
+      <div class="card-body p-4">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <div class="d-flex justify-content-between">
+            <a href="{% url 'faculty_feedback' %}" class="btn btn-outline-secondary rounded-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+            <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-send me-1"></i>Send Reply</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

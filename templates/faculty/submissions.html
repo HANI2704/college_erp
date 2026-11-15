@@ -1,0 +1,43 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Submissions{% endblock %}
+{% block page_title %}Assignment Submissions{% endblock %}
+{% block content %}
+<div class="card mb-3" style="background:#f8fafc">
+  <div class="card-body py-2 px-4">
+    <div class="fw-semibold">{{ assignment.title }}</div>
+    <div class="text-muted" style="font-size:.8rem">{{ assignment.subject.subject_name }} &bull; Due: {{ assignment.due_date|date:"d M Y, h:i A" }} &bull; Total Marks: {{ assignment.total_marks }}</div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header py-3 d-flex justify-content-between align-items-center">
+    <h6 class="mb-0 fw-semibold"><i class="bi bi-inbox-fill text-primary me-2"></i>Submissions ({{ submissions|length }})</h6>
+    <a href="{% url 'faculty_assignments' %}" class="btn btn-sm btn-outline-secondary rounded-3"><i class="bi bi-arrow-left me-1"></i>Back</a>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Student</th><th>PRN</th><th>Submitted</th><th>Status</th><th>Marks</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for sub in submissions %}
+            <tr>
+              <td class="fw-semibold" style="font-size:.875rem">{{ sub.student.name }}</td>
+              <td class="text-muted" style="font-size:.8rem">{{ sub.student.prnno }}</td>
+              <td style="font-size:.8rem">{{ sub.submitted_at|date:"d M Y, h:i A" }}</td>
+              <td><span class="badge {% if sub.status == 'graded' %}bg-success{% elif sub.status == 'late' %}bg-warning text-dark{% else %}bg-info{% endif %}">{{ sub.get_status_display }}</span></td>
+              <td>{% if sub.marks_obtained %}<span class="fw-bold text-success">{{ sub.marks_obtained }}/{{ assignment.total_marks }}</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
+              <td>
+                <div class="d-flex gap-1">
+                  <a href="{{ sub.file.url }}" class="btn btn-sm btn-outline-success rounded-3" download><i class="bi bi-download"></i></a>
+                  <a href="{% url 'grade_submission' sub.id %}" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-pencil-square me-1"></i>Grade</a>
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-center py-5 text-muted"><i class="bi bi-inbox" style="font-size:2rem;color:#cbd5e1"></i><div class="mt-2">No submissions yet</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

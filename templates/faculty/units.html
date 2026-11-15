@@ -1,0 +1,26 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Course Units{% endblock %}
+{% block page_title %}Course Units{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-plus-circle text-primary me-2"></i>Add Unit</h6></div>
+      <div class="card-body">
+        <form method="POST" action="{% url 'faculty_units' %}">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.82rem">{{ field.label }}</label>{{ field }}</div>{% endfor %}
+          <button type="submit" class="btn btn-primary w-100 rounded-3">Add Unit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-collection-fill text-primary me-2"></i>Units ({{ units|length }})</h6></div>
+      <div class="card-body p-0">
+        {% for unit in units %}<div class="p-3 border-bottom"><div class="fw-semibold" style="font-size:.875rem">Unit {{ unit.order }}: {{ unit.title }}</div><div class="text-muted" style="font-size:.8rem">{{ unit.subject.subject_name }}{% if unit.description %} &bull; {{ unit.description|truncatechars:60 }}{% endif %}</div></div>{% empty %}<div class="text-center py-5 text-muted"><i class="bi bi-collection" style="font-size:2rem;color:#cbd5e1"></i><div class="mt-2">No units added</div></div>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

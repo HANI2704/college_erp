@@ -1,0 +1,21 @@
+{% extends "faculty/base_faculty.html" %}
+{% block title %}Create Quiz{% endblock %}
+{% block page_title %}Create Quiz{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header py-3"><h6 class="mb-0 fw-semibold"><i class="bi bi-patch-question text-primary me-2"></i>Quiz Details</h6></div>
+      <div class="card-body p-4">
+        <form method="POST">{% csrf_token %}
+          {% for field in form %}<div class="mb-3"><label class="form-label fw-semibold" style="font-size:.85rem">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="text-danger" style="font-size:.8rem">{{ field.errors.0 }}</div>{% endif %}</div>{% endfor %}
+          <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'faculty_quizzes' %}" class="btn btn-outline-secondary rounded-3"><i class="bi bi-arrow-left me-1"></i>Cancel</a>
+            <button type="submit" class="btn btn-primary rounded-3"><i class="bi bi-arrow-right me-1"></i>Next: Add Questions</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
